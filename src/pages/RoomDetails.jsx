@@ -14,7 +14,7 @@ function RoomDetails() {
 
   if (!room) {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-10">
+      <div className="mx-auto w-[92%] max-w-[1600px] px-2 py-10 sm:px-4">
         <p className="text-lg font-semibold text-slate-900">Room not found.</p>
         <Button variant="ghost" className="mt-4" onClick={() => navigate('/rooms')}>
           Back to rooms
@@ -28,7 +28,7 @@ function RoomDetails() {
   const badgeLabel = room.isSuperHot ? 'Super Hot' : room.isHot ? 'Hot' : null;
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10">
+    <div className="mx-auto w-[92%] max-w-[1600px] px-2 py-10 sm:px-4">
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="space-y-3">
           <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">

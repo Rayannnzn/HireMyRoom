@@ -35,7 +35,7 @@ function Rooms() {
   }, [filters]);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
+    <div className="mx-auto w-[92%] max-w-[1600px] px-2 py-10 sm:px-4">
       <div className="flex flex-col gap-2">
         <p className="text-sm font-semibold uppercase tracking-wide text-indigo-600">Browse</p>
         <h1 className="text-3xl font-bold text-slate-900">All rooms & apartments</h1>
@@ -48,7 +48,7 @@ function Rooms() {
         <SearchBar filters={filters} onFilterChange={setFilters} onSearch={setFilters} cities={cities} />
       </div>
 
-      <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {filteredRooms.map((room) => (
           <RoomCard key={room.id} room={room} />
         ))}

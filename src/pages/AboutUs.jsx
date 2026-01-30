@@ -64,7 +64,7 @@ function AboutUs() {
   ];
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
+    <div className="mx-auto w-[92%] max-w-[1600px] px-2 py-10 sm:px-4">
       {/* Hero Section */}
       <section className="mb-16 text-center">
         <h1 className="text-4xl font-bold text-slate-900 md:text-5xl">About Hire My Room</h1>

@@ -1,7 +1,7 @@
 function Footer() {
   return (
     <footer className="mt-12 border-t border-slate-200 bg-white">
-      <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-8 md:flex-row md:items-center md:justify-between">
+      <div className="mx-auto flex w-[92%] max-w-[1600px] flex-col gap-4 px-2 py-8 sm:px-4 md:flex-row md:items-center md:justify-between">
         <div>
           <p className="text-lg font-semibold text-slate-900">HireMyRoom</p>
           <p className="text-sm text-slate-500">Find rooms, apartments, hostels, and offices with ease.</p>

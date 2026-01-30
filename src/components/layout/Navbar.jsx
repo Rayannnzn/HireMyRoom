@@ -28,7 +28,7 @@ function Navbar() {
         </button>
       </div>
 
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+      <div className="mx-auto flex w-[92%] max-w-[1600px] items-center justify-between px-2 py-4 sm:px-4">
         <Link to="/" className="flex items-center gap-2">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-lg font-bold text-white">
             HR
