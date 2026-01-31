@@ -21,3 +21,36 @@ a {
 * {
   box-sizing: border-box;
 }
+
+/* ===== Scroll Reveal Animations ===== */
+/* Fade-in and slide-up animation for scroll-triggered elements */
+
+.scroll-reveal {
+  /* Initial hidden state - invisible and slightly below */
+  opacity: 0;
+  transform: translateY(30px);
+  
+  /* Smooth transition for both opacity and transform */
+  transition: 
+    opacity 0.6s ease-out,
+    transform 0.6s ease-out;
+  
+  /* Prevent layout shift by maintaining space */
+  will-change: opacity, transform;
+}
+
+.scroll-reveal-visible {
+  /* Visible state - fully opaque and in original position */
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .scroll-reveal {
+    /* Disable animations for users who prefer reduced motion */
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

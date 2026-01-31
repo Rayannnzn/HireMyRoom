@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import CategoryCard from '../components/cards/CategoryCard';
 import RoomCard from '../components/cards/RoomCard';
 import SearchBar from '../components/common/SearchBar';
+import ScrollReveal from '../components/common/ScrollReveal';
 import { rooms } from '../data/rooms';
 import { cities } from '../data/cities';
 
@@ -52,7 +53,7 @@ function Home() {
   };
 
   return (
-    <div className="mx-auto w-[92%] max-w-[1600px] px-2 py-10 sm:px-4">
+    <div className="mx-auto w-[92%] max-w-1600px px-2 py-10 sm:px-4">
       {/* Hero Section */}
       {/* <section className="rounded-3xl bg-linear-to-r from-indigo-600 to-indigo-700 px-6 py-10 text-white shadow-lg">
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
@@ -77,59 +78,67 @@ function Home() {
       </section> */}
 
       {/* Choose a category */}
-      <section className="mt-10 space-y-4">
-        <h2 className="text-xl font-semibold text-slate-900">Choose a category</h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-          {categories.map((category) => (
-            <CategoryCard
-              key={category.label}
-              label={category.label}
-              color={category.color}
-              active={activeCategory === category.value}
-              onClick={() => handleCategorySelect(category.value)}
-            />
-          ))}
-        </div>
-      </section>
+      <ScrollReveal>
+        <section className="mt-10 space-y-4">
+          <h2 className="text-xl font-semibold text-slate-900">Choose a category</h2>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+            {categories.map((category) => (
+              <CategoryCard
+                key={category.label}
+                label={category.label}
+                color={category.color}
+                active={activeCategory === category.value}
+                onClick={() => handleCategorySelect(category.value)}
+              />
+            ))}
+          </div>
+        </section>
+      </ScrollReveal>
 
-      <section className="mt-10 space-y-4">
-        <h2 className="text-xl font-semibold text-slate-900">Search rooms</h2>
-        <SearchBar filters={filters} onFilterChange={setFilters} onSearch={setFilters} cities={cities} />
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {filteredRooms.slice(0, 8).map((room) => (
-            <RoomCard key={room.id} room={room} />
-          ))}
-          {filteredRooms.length === 0 && <p className="text-slate-600">No rooms match your filters yet.</p>}
-        </div>
-      </section>
+      <ScrollReveal delay={100}>
+        <section className="mt-10 space-y-4">
+          <h2 className="text-xl font-semibold text-slate-900">Search rooms</h2>
+          <SearchBar filters={filters} onFilterChange={setFilters} onSearch={setFilters} cities={cities} />
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {filteredRooms.slice(0, 8).map((room) => (
+              <RoomCard key={room.id} room={room} />
+            ))}
+            {filteredRooms.length === 0 && <p className="text-slate-600">No rooms match your filters yet.</p>}
+          </div>
+        </section>
+      </ScrollReveal>
 
-      <section className="mt-12 space-y-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-slate-900">Hot Rooms</h2>
-          <a href="/rooms" className="text-sm font-semibold text-indigo-700 hover:text-indigo-800">
-            View all
-          </a>
-        </div>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {hotRooms.map((room) => (
-            <RoomCard key={room.id} room={room} />
-          ))}
-        </div>
-      </section>
+      <ScrollReveal delay={200}>
+        <section className="mt-12 space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-slate-900">Hot Rooms</h2>
+            <a href="/rooms" className="text-sm font-semibold text-indigo-700 hover:text-indigo-800">
+              View all
+            </a>
+          </div>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {hotRooms.map((room) => (
+              <RoomCard key={room.id} room={room} />
+            ))}
+          </div>
+        </section>
+      </ScrollReveal>
 
-      <section className="mt-12 space-y-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-slate-900">Super Hot Rooms</h2>
-          <a href="/rooms" className="text-sm font-semibold text-indigo-700 hover:text-indigo-800">
-            View all
-          </a>
-        </div>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {superHotRooms.map((room) => (
-            <RoomCard key={room.id} room={room} />
-          ))}
-        </div>
-      </section>
+      <ScrollReveal delay={300}>
+        <section className="mt-12 space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-slate-900">Super Hot Rooms</h2>
+            <a href="/rooms" className="text-sm font-semibold text-indigo-700 hover:text-indigo-800">
+              View all
+            </a>
+          </div>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {superHotRooms.map((room) => (
+              <RoomCard key={room.id} room={room} />
+            ))}
+          </div>
+        </section>
+      </ScrollReveal>
     </div>
   );
 }
