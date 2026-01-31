@@ -238,11 +238,6 @@ CMD ["npm", "run", "preview"]
 2. Upload `dist/` folder to web server
 3. Configure server to serve `index.html` for all routes (SPA routing)
 
-## 📚 Additional Resources
-
-- **Scroll Animations**: [src/components/common/SCROLL_ANIMATIONS.md](src/components/common/SCROLL_ANIMATIONS.md)
-- **Implementation Guide**: [src/components/common/IMPLEMENTATION.md](src/components/common/IMPLEMENTATION.md)
-- **Architecture Diagrams**: [SCROLL_ANIMATION_ARCHITECTURE.md](SCROLL_ANIMATION_ARCHITECTURE.md)
 
 ## 🔮 Future Improvements
 
