@@ -1,7 +1,9 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import Button from '../components/common/Button';
 import Badge from '../components/common/Badge';
+import BookingRequestModal from '../components/common/BookingRequestModal';
 import { rooms } from '../data/rooms';
 
 const facilities = ['High-speed WiFi', 'Air Conditioning', '24/7 Security', 'Backup Power', 'Parking', 'Cleaning service'];
@@ -9,6 +11,8 @@ const facilities = ['High-speed WiFi', 'Air Conditioning', '24/7 Security', 'Bac
 function RoomDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [showBookingModal, setShowBookingModal] = useState(false);
 
   const room = useMemo(() => rooms.find((r) => r.id === id), [id]);
 
@@ -77,13 +81,32 @@ function RoomDetails() {
           </div>
 
           <div className="flex gap-3">
-            <Button className="flex-1">Book Now</Button>
+            <Button
+              className="flex-1"
+              onClick={() => {
+                if (user && user.role === 'GUEST') {
+                  setShowBookingModal(true);
+                } else if (user && user.role === 'OWNER') {
+                  alert('Owners cannot book properties. Switch to Guest account.');
+                } else {
+                  navigate('/login');
+                }
+              }}
+            >
+              Book Now
+            </Button>
             <Button variant="ghost" className="flex-1" onClick={() => navigate('/rooms')}>
               Back to rooms
             </Button>
           </div>
         </div>
       </div>
+
+      <BookingRequestModal
+        isOpen={showBookingModal}
+        onClose={() => setShowBookingModal(false)}
+        property={room}
+      />
     </div>
   );
 }

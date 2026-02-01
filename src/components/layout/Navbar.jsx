@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import Button from '../common/Button';
 
 const navItems = [
@@ -12,6 +13,7 @@ const navItems = [
 
 function Navbar() {
   const [language, setLanguage] = useState('ENG');
+  const { user } = useAuth();
 
   return (
     <header className="border-b border-slate-200 bg-white shadow-sm">
@@ -56,12 +58,23 @@ function Navbar() {
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
-          <Link to="/login" className="text-sm font-semibold text-slate-700 hover:text-indigo-700">
-            Login
-          </Link>
-          <Link to="/signup">
-            <Button>Sign Up</Button>
-          </Link>
+          {user ? (
+            <Link
+              to={user.role === 'OWNER' ? '/owner/dashboard' : '/guest/booking-requests'}
+              className="text-sm font-semibold text-indigo-700 hover:text-indigo-800"
+            >
+              Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link to="/login" className="text-sm font-semibold text-slate-700 hover:text-indigo-700">
+                Login
+              </Link>
+              <Link to="/signup">
+                <Button>Sign Up</Button>
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </header>
