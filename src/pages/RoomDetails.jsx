@@ -5,7 +5,7 @@ import Button from '../components/common/Button';
 import Badge from '../components/common/Badge';
 import BookingRequestModal from '../components/common/BookingRequestModal';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { fetchRoomById } from '../services/roomsApi';
+import { fetchRooms } from '../services/roomsApi';
 import Loader from '../components/common/Loader';
 
 const facilities = ['High-speed WiFi', 'Air Conditioning', '24/7 Security', 'Backup Power', 'Parking', 'Cleaning service'];
@@ -29,9 +29,18 @@ function RoomDetails() {
       setIsLoading(true);
       setError('');
       try {
-        const data = await fetchRoomById(id);
+        // Fetch all rooms and find the one matching the ID
+        const { rooms } = await fetchRooms();
         if (!isMounted) return;
-        setRoom(data);
+
+        // Find room by ID (convert to number for comparison if needed)
+        const foundRoom = rooms.find((r) => String(r.id) === String(id));
+
+        if (!foundRoom) {
+          setError('Room not found');
+        } else {
+          setRoom(foundRoom);
+        }
       } catch (err) {
         if (!isMounted) return;
         setError(err.message || 'Something went wrong while loading room details.');
@@ -69,7 +78,7 @@ function RoomDetails() {
 
   if (isLoading) {
     return (
-      <div className="mx-auto flex min-h-screen w-[92%] max-w-[1600px] items-center px-2 py-16 sm:px-4 sm:py-20">
+      <div className="mx-auto flex min-h-[500px] w-[92%] max-w-[1600px] items-center justify-center px-2 py-20 sm:px-4">
         <Loader size="lg" />
       </div>
     );
@@ -160,11 +169,10 @@ function RoomDetails() {
                   {gallery.map((_, idx) => (
                     <span
                       key={idx}
-                      className={`h-1.5 rounded-full transition-all ${
-                        idx === activeImageIndex
-                          ? 'w-5 bg-white'
-                          : 'w-2 bg-white/50'
-                      }`}
+                      className={`h-1.5 rounded-full transition-all ${idx === activeImageIndex
+                        ? 'w-5 bg-white'
+                        : 'w-2 bg-white/50'
+                        }`}
                     />
                   ))}
                 </div>
@@ -181,11 +189,10 @@ function RoomDetails() {
                   key={idx}
                   type="button"
                   onClick={() => setActiveImageIndex(idx)}
-                  className={`group overflow-hidden rounded-2xl border bg-slate-100 transition ${
-                    isActive
-                      ? 'border-indigo-500 ring-2 ring-indigo-500/40'
-                      : 'border-slate-200 hover:border-slate-300'
-                  }`}
+                  className={`group overflow-hidden rounded-2xl border bg-slate-100 transition ${isActive
+                    ? 'border-indigo-500 ring-2 ring-indigo-500/40'
+                    : 'border-slate-200 hover:border-slate-300'
+                    }`}
                 >
                   <img
                     src={img}

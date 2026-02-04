@@ -155,21 +155,20 @@ function Home() {
         <section className="mt-10 space-y-4">
           <h2 className="text-xl font-semibold text-slate-900">Search rooms</h2>
           <SearchBar filters={filters} onFilterChange={setFilters} onSearch={setFilters} cities={cities} />
-          <div className="relative">
+          {isLoading && rooms.length === 0 ? (
+            <div className="flex min-h-[300px] items-center justify-center py-20">
+              <Loader size="lg" />
+            </div>
+          ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {filteredRooms.map((room) => (
                 <RoomCard key={room.id} room={room} />
               ))}
-              {!isLoading && filteredRooms.length === 0 && !error && (
+              {filteredRooms.length === 0 && !error && (
                 <p className="text-slate-600">No rooms match your filters yet.</p>
               )}
             </div>
-            {isLoading && rooms.length === 0 && (
-              <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-white/40">
-                <Loader size="lg" />
-              </div>
-            )}
-          </div>
+          )}
           {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
           <div className="mt-6 flex justify-center">
             {nextPageUrl && (
