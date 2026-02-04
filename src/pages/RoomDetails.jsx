@@ -1,13 +1,16 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/common/Button';
 import Badge from '../components/common/Badge';
 import BookingRequestModal from '../components/common/BookingRequestModal';
-import { rooms } from '../data/rooms';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { fetchRoomById } from '../services/roomsApi';
+import Loader from '../components/common/Loader';
 
 const facilities = ['High-speed WiFi', 'Air Conditioning', '24/7 Security', 'Backup Power', 'Parking', 'Cleaning service'];
+const PLACEHOLDER_IMAGE =
+  'https://images.unsplash.com/photo-1505691723518-36a5ac3be353?auto=format&fit=crop&w=1200&q=80';
 
 function RoomDetails() {
   const { id } = useParams();
@@ -15,14 +18,70 @@ function RoomDetails() {
   const { user } = useAuth();
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [room, setRoom] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const room = useMemo(() => rooms.find((r) => r.id === id), [id]);
+  useEffect(() => {
+    let isMounted = true;
 
-  if (!room) {
+    const loadRoom = async () => {
+      setIsLoading(true);
+      setError('');
+      try {
+        const data = await fetchRoomById(id);
+        if (!isMounted) return;
+        setRoom(data);
+      } catch (err) {
+        if (!isMounted) return;
+        setError(err.message || 'Something went wrong while loading room details.');
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadRoom();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [id]);
+
+  const isSuperHot = room?.room_rank === 'super_hot';
+  const isHot = room?.room_rank === 'hot';
+  const badgeTone = isSuperHot ? 'super' : isHot ? 'hot' : null;
+  const badgeLabel = isSuperHot ? 'Super Hot' : isHot ? 'Hot' : null;
+
+  const priceNumber = room ? Number(room.price) : null;
+  const priceDisplay = room && Number.isFinite(priceNumber) ? priceNumber.toLocaleString() : room?.price;
+  const priceType = room?.pricing_category || room?.priceType || 'month';
+
+  const imageSrc = room?.image || PLACEHOLDER_IMAGE;
+  const locationText =
+    room?.location || [room?.area, room?.city].filter(Boolean).join(', ');
+
+  const gallery = useMemo(
+    () => (imageSrc ? [imageSrc, imageSrc, imageSrc] : []),
+    [imageSrc],
+  );
+
+  if (isLoading) {
+    return (
+      <div className="mx-auto flex min-h-screen w-[92%] max-w-[1600px] items-center px-2 py-16 sm:px-4 sm:py-20">
+        <Loader size="lg" />
+      </div>
+    );
+  }
+
+  if (error || !room) {
     return (
       <div className="mx-auto flex min-h-screen w-[92%] max-w-[1600px] items-center px-2 py-16 sm:px-4 sm:py-20">
         <div>
-          <p className="text-lg font-semibold text-slate-900">Room not found.</p>
+          <p className="text-lg font-semibold text-slate-900">
+            {error || 'Room not found.'}
+          </p>
           <Button variant="ghost" className="mt-4" onClick={() => navigate('/rooms')}>
             Back to rooms
           </Button>
@@ -30,10 +89,6 @@ function RoomDetails() {
       </div>
     );
   }
-
-  const gallery = [room.image, room.image, room.image];
-  const badgeTone = room.isSuperHot ? 'super' : room.isHot ? 'hot' : null;
-  const badgeLabel = room.isSuperHot ? 'Super Hot' : room.isHot ? 'Hot' : null;
 
   return (
     <div className="mx-auto min-h-screen w-[92%] max-w-[1600px] px-2 pt-16 pb-20 sm:px-4 sm:pt-24 sm:pb-24">
@@ -47,7 +102,7 @@ function RoomDetails() {
             {room.title}
           </h1>
           <p className="text-sm text-slate-600">
-            {room.area}, {room.city}
+            {locationText}
           </p>
         </div>
         <div className="mt-1 flex items-center gap-3 text-sm text-slate-500">
@@ -148,7 +203,7 @@ function RoomDetails() {
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-1.5">
               <p className="inline-flex rounded-full bg-indigo-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-indigo-700">
-                {room.type} room
+                {room.room_category || room.type} room
               </p>
               <p className="text-xs text-slate-500">Listing ID: {room.id}</p>
             </div>
@@ -157,8 +212,8 @@ function RoomDetails() {
 
           <div className="space-y-3 border-b border-slate-100 pb-4">
             <div className="text-3xl font-bold text-slate-900 sm:text-4xl">
-              PKR {room.price.toLocaleString()}
-              <span className="ml-1 text-base font-medium text-slate-500">/ {room.priceType}</span>
+              PKR {priceDisplay}
+              <span className="ml-1 text-base font-medium text-slate-500">/ {priceType}</span>
             </div>
             <p className="text-sm text-slate-500">
               Taxes, utilities, and additional fees are subject to owner policy.
