@@ -5,6 +5,7 @@ import Button from '../components/common/Button';
 import Badge from '../components/common/Badge';
 import BookingRequestModal from '../components/common/BookingRequestModal';
 import { rooms } from '../data/rooms';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const facilities = ['High-speed WiFi', 'Air Conditioning', '24/7 Security', 'Backup Power', 'Parking', 'Cleaning service'];
 
@@ -13,6 +14,7 @@ function RoomDetails() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [showBookingModal, setShowBookingModal] = useState(false);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   const room = useMemo(() => rooms.find((r) => r.id === id), [id]);
 
@@ -34,47 +36,144 @@ function RoomDetails() {
   const badgeLabel = room.isSuperHot ? 'Super Hot' : room.isHot ? 'Hot' : null;
 
   return (
-    <div className="mx-auto min-h-screen w-[92%] max-w-[1600px] px-2 pt-14 pb-16 sm:px-4 sm:pt-20 sm:pb-20">
-      <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
-        <div className="space-y-4 sm:space-y-5">
-          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-            <img src={room.image} alt={room.title} className="h-80 w-full object-cover sm:h-96" />
+    <div className="mx-auto min-h-screen w-[92%] max-w-[1600px] px-2 pt-16 pb-20 sm:px-4 sm:pt-24 sm:pb-24">
+      {/* Page header / breadcrumb */}
+      <div className="mb-8 flex flex-col gap-3 sm:mb-10 sm:flex-row sm:items-baseline sm:justify-between">
+        <div className="space-y-1">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-indigo-600">
+            Room details
+          </p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl lg:text-4xl">
+            {room.title}
+          </h1>
+          <p className="text-sm text-slate-600">
+            {room.area}, {room.city}
+          </p>
+        </div>
+        <div className="mt-1 flex items-center gap-3 text-sm text-slate-500">
+          <button
+            type="button"
+            onClick={() => navigate('/rooms')}
+            className="inline-flex items-center text-xs font-semibold uppercase tracking-wide text-slate-500 hover:text-slate-700"
+          >
+            ← Back to all rooms
+          </button>
+        </div>
+      </div>
+
+      <div className="grid gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-12">
+        {/* Left: Gallery */}
+        <div className="space-y-5 sm:space-y-6">
+          {/* Main image slider */}
+          <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-slate-900/5 shadow-sm">
+            <img
+              src={gallery[activeImageIndex]}
+              alt={room.title}
+              className="aspect-16/10 w-full object-cover sm:aspect-video"
+            />
+
+            {gallery.length > 1 && (
+              <>
+                {/* Left arrow */}
+                <button
+                  type="button"
+                  onClick={() =>
+                    setActiveImageIndex(
+                      (prev) => (prev - 1 + gallery.length) % gallery.length,
+                    )
+                  }
+                  className="absolute left-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-slate-700 shadow-sm ring-1 ring-slate-200 backdrop-blur transition hover:bg-white hover:text-slate-900"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+
+                {/* Right arrow */}
+                <button
+                  type="button"
+                  onClick={() =>
+                    setActiveImageIndex(
+                      (prev) => (prev + 1) % gallery.length,
+                    )
+                  }
+                  className="absolute right-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/80 text-slate-700 shadow-sm ring-1 ring-slate-200 backdrop-blur transition hover:bg-white hover:text-slate-900"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+
+                {/* Dots indicator */}
+                <div className="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center gap-1.5">
+                  {gallery.map((_, idx) => (
+                    <span
+                      key={idx}
+                      className={`h-1.5 rounded-full transition-all ${
+                        idx === activeImageIndex
+                          ? 'w-5 bg-white'
+                          : 'w-2 bg-white/50'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
           </div>
+
+          {/* Thumbnails */}
           <div className="grid grid-cols-3 gap-4">
-            {gallery.map((img, idx) => (
-              <div key={idx} className="overflow-hidden rounded-xl border border-slate-200">
-                <img src={img} alt={`${room.title}-${idx}`} className="h-24 w-full object-cover sm:h-28" />
-              </div>
-            ))}
+            {gallery.map((img, idx) => {
+              const isActive = idx === activeImageIndex;
+              return (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setActiveImageIndex(idx)}
+                  className={`group overflow-hidden rounded-2xl border bg-slate-100 transition ${
+                    isActive
+                      ? 'border-indigo-500 ring-2 ring-indigo-500/40'
+                      : 'border-slate-200 hover:border-slate-300'
+                  }`}
+                >
+                  <img
+                    src={img}
+                    alt={`${room.title}-${idx}`}
+                    className="h-24 w-full object-cover transition duration-200 group-hover:scale-105 sm:h-28"
+                  />
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        <div className="flex flex-col gap-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7 lg:p-8">
+        {/* Right: Details */}
+        <div className="flex flex-col gap-6 rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-sm backdrop-blur-sm sm:p-7 lg:p-8">
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-1.5">
-              <p className="text-xs font-semibold uppercase tracking-wide text-indigo-600">{room.type} room</p>
-              <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">{room.title}</h1>
-              <p className="text-sm text-slate-600">
-                {room.area}, {room.city}
+              <p className="inline-flex rounded-full bg-indigo-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-indigo-700">
+                {room.type} room
               </p>
+              <p className="text-xs text-slate-500">Listing ID: {room.id}</p>
             </div>
             {badgeTone && <Badge label={badgeLabel} tone={badgeTone} />}
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-3 border-b border-slate-100 pb-4">
             <div className="text-3xl font-bold text-slate-900 sm:text-4xl">
               PKR {room.price.toLocaleString()}
               <span className="ml-1 text-base font-medium text-slate-500">/ {room.priceType}</span>
             </div>
-            <p className="text-sm text-slate-500">Taxes, utilities, and additional fees are subject to owner policy.</p>
+            <p className="text-sm text-slate-500">
+              Taxes, utilities, and additional fees are subject to owner policy.
+            </p>
           </div>
 
-          <p className="text-sm leading-relaxed text-slate-700 sm:text-base">
-            This listing is ready for quick booking once the backend is connected. Expect bright interiors, reliable
-            utilities, and responsive support for residents or guests.
-          </p>
-
           <div className="space-y-3">
+            <p className="text-sm font-semibold text-slate-800">Overview</p>
+            <p className="text-sm leading-relaxed text-slate-700 sm:text-base">
+              This listing is ready for quick booking once the backend is connected. Expect bright interiors, reliable
+              utilities, and responsive support for residents or guests.
+            </p>
+          </div>
+
+          <div className="space-y-3 border-t border-slate-100 pt-4">
             <p className="text-sm font-semibold text-slate-800">Facilities</p>
             <div className="flex flex-wrap gap-2.5">
               {facilities.map((facility) => (
@@ -88,7 +187,7 @@ function RoomDetails() {
             </div>
           </div>
 
-          <div className="mt-2 flex flex-col gap-3 sm:mt-4 sm:flex-row">
+          <div className="mt-2 flex flex-col gap-3 border-t border-slate-100 pt-4 sm:mt-4 sm:flex-row">
             <Button
               className="w-full sm:flex-1"
               onClick={() => {
