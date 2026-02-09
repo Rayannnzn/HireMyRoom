@@ -13,22 +13,22 @@ function Rooms() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    let isMounted = true;
+    let ignore = false;
 
     const loadInitialRooms = async () => {
       setIsLoading(true);
       setError('');
       try {
         const { rooms: fetchedRooms, nextPageUrl: nextUrl, cities: fetchedCities } = await fetchRooms();
-        if (!isMounted) return;
+        if (ignore) return;
         setRooms(fetchedRooms);
         setNextPageUrl(nextUrl);
         setCities(fetchedCities);
       } catch (err) {
-        if (!isMounted) return;
+        if (ignore) return;
         setError(err.message || 'Something went wrong while loading rooms.');
       } finally {
-        if (isMounted) {
+        if (!ignore) {
           setIsLoading(false);
         }
       }
@@ -37,7 +37,7 @@ function Rooms() {
     loadInitialRooms();
 
     return () => {
-      isMounted = false;
+      ignore = true;
     };
   }, []);
 

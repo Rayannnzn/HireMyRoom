@@ -23,7 +23,7 @@ function RoomDetails() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    let isMounted = true;
+    let ignore = false;
 
     const loadRoom = async () => {
       setIsLoading(true);
@@ -31,7 +31,7 @@ function RoomDetails() {
       try {
         // Fetch all rooms and find the one matching the ID
         const { rooms } = await fetchRooms();
-        if (!isMounted) return;
+        if (ignore) return;
 
         // Find room by ID (convert to number for comparison if needed)
         const foundRoom = rooms.find((r) => String(r.id) === String(id));
@@ -42,10 +42,10 @@ function RoomDetails() {
           setRoom(foundRoom);
         }
       } catch (err) {
-        if (!isMounted) return;
+        if (ignore) return;
         setError(err.message || 'Something went wrong while loading room details.');
       } finally {
-        if (isMounted) {
+        if (!ignore) {
           setIsLoading(false);
         }
       }
@@ -54,7 +54,7 @@ function RoomDetails() {
     loadRoom();
 
     return () => {
-      isMounted = false;
+      ignore = true;
     };
   }, [id]);
 

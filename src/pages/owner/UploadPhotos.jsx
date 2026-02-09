@@ -23,7 +23,6 @@ function UploadPhotos() {
     }));
     const updatedImages = [...images, ...newImages];
     setImages(updatedImages);
-    imagesRef.current = updatedImages;
   };
 
   const handleRemoveImage = (id) => {
@@ -33,7 +32,6 @@ function UploadPhotos() {
     }
     const updatedImages = images.filter((img) => img.id !== id);
     setImages(updatedImages);
-    imagesRef.current = updatedImages;
   };
 
   // Update ref when images change
