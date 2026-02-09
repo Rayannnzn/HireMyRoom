@@ -111,7 +111,7 @@ function Home() {
   return (
     <div className="mx-auto w-[92%] max-w-1600px px-2 py-10 sm:px-4">
       {/* Hero Section */}
-      <section className="rounded-3xl bg-linear-to-r from-indigo-600 to-indigo-700 px-6 py-10 text-white shadow-lg">
+      {/* <section className="rounded-3xl bg-linear-to-r from-indigo-600 to-indigo-700 px-6 py-10 text-white shadow-lg">
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div className="max-w-xl space-y-4">
             <p className="inline-flex rounded-full bg-indigo-500/70 px-3 py-1 text-xs font-semibold uppercase tracking-wide">
@@ -131,7 +131,7 @@ function Home() {
             </ul>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Choose a category */}
       <ScrollReveal>
