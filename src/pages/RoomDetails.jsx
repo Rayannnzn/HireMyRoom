@@ -5,12 +5,55 @@ import Button from '../components/common/Button';
 import Badge from '../components/common/Badge';
 import BookingRequestModal from '../components/common/BookingRequestModal';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { fetchRooms } from '../services/roomsApi';
+import { fetchHomeData, getRoomImageUrl } from '../services/homeApi';
+import { isDummyRoomId, findDummyRoom } from '../data/dummyRooms';
 import Loader from '../components/common/Loader';
 
-const facilities = ['High-speed WiFi', 'Air Conditioning', '24/7 Security', 'Backup Power', 'Parking', 'Cleaning service'];
 const PLACEHOLDER_IMAGE =
   'https://images.unsplash.com/photo-1505691723518-36a5ac3be353?auto=format&fit=crop&w=1200&q=80';
+
+/**
+ * Build a gallery array from room.images.
+ * Returns objects with { large, small } URLs for main/thumbnail.
+ * Falls back to a single placeholder if no images exist.
+ */
+function buildGallery(room) {
+  if (room?.images?.length > 0) {
+    return room.images.map((img) => ({
+      large: getRoomImageUrl(img.image, 'large'),
+      small: getRoomImageUrl(img.image, 'small'),
+    }));
+  }
+  return [{ large: PLACEHOLDER_IMAGE, small: PLACEHOLDER_IMAGE }];
+}
+
+/**
+ * Find a room by ID across all API arrays.
+ * @param {Object} homeData - The full API response data
+ * @param {string} id - Room ID to find
+ * @returns {Object|undefined}
+ */
+function findApiRoom(homeData, id) {
+  const allRooms = [
+    ...(homeData?.superHotRooms ?? []),
+    ...(homeData?.hotRooms ?? []),
+    ...(homeData?.normalRooms ?? []),
+    ...(homeData?.apartments ?? []),
+  ];
+  return allRooms.find((r) => String(r.id) === String(id));
+}
+
+/**
+ * Parse services string into an array of facility tags.
+ * Handles comma-separated, newline-separated, or combined formats.
+ */
+function parseServices(services) {
+  if (!services) return [];
+  return services
+    .split(/[,\r\n]+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
 
 function RoomDetails() {
   const { id } = useParams();
@@ -22,20 +65,32 @@ function RoomDetails() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const isDummy = isDummyRoomId(id);
+
   useEffect(() => {
     let ignore = false;
 
+    // If it's a dummy room, load from local data — no API call
+    if (isDummy) {
+      const dummyRoom = findDummyRoom(id);
+      if (dummyRoom) {
+        setRoom(dummyRoom);
+      } else {
+        setError('Room not found');
+      }
+      setIsLoading(false);
+      return;
+    }
+
+    // API room — fetch from /api/home and find by ID
     const loadRoom = async () => {
       setIsLoading(true);
       setError('');
       try {
-        // Fetch all rooms and find the one matching the ID
-        const { rooms } = await fetchRooms();
+        const homeData = await fetchHomeData();
         if (ignore) return;
 
-        // Find room by ID (convert to number for comparison if needed)
-        const foundRoom = rooms.find((r) => String(r.id) === String(id));
-
+        const foundRoom = findApiRoom(homeData, id);
         if (!foundRoom) {
           setError('Room not found');
         } else {
@@ -56,8 +111,9 @@ function RoomDetails() {
     return () => {
       ignore = true;
     };
-  }, [id]);
+  }, [id, isDummy]);
 
+  // Derived values
   const isSuperHot = room?.room_rank === 'super_hot';
   const isHot = room?.room_rank === 'hot';
   const badgeTone = isSuperHot ? 'super' : isHot ? 'hot' : null;
@@ -67,14 +123,17 @@ function RoomDetails() {
   const priceDisplay = room && Number.isFinite(priceNumber) ? priceNumber.toLocaleString() : room?.price;
   const priceType = room?.pricing_category || room?.priceType || 'month';
 
-  const imageSrc = room?.image || PLACEHOLDER_IMAGE;
   const locationText =
     room?.location || [room?.area, room?.city].filter(Boolean).join(', ');
 
-  const gallery = useMemo(
-    () => (imageSrc ? [imageSrc, imageSrc, imageSrc] : []),
-    [imageSrc],
-  );
+  const gallery = useMemo(() => buildGallery(room), [room]);
+
+  const facilities = useMemo(() => parseServices(room?.services), [room?.services]);
+
+  // Reset image index when room changes
+  useEffect(() => {
+    setActiveImageIndex(0);
+  }, [room?.id]);
 
   if (isLoading) {
     return (
@@ -91,8 +150,8 @@ function RoomDetails() {
           <p className="text-lg font-semibold text-slate-900">
             {error || 'Room not found.'}
           </p>
-          <Button variant="ghost" className="mt-4" onClick={() => navigate('/rooms')}>
-            Back to rooms
+          <Button variant="ghost" className="mt-4" onClick={() => navigate('/')}>
+            Back to home
           </Button>
         </div>
       </div>
@@ -117,10 +176,10 @@ function RoomDetails() {
         <div className="mt-1 flex items-center gap-3 text-sm text-slate-500">
           <button
             type="button"
-            onClick={() => navigate('/rooms')}
+            onClick={() => navigate('/')}
             className="inline-flex items-center text-xs font-semibold uppercase tracking-wide text-slate-500 hover:text-slate-700"
           >
-            ← Back to all rooms
+            ← Back to home
           </button>
         </div>
       </div>
@@ -128,12 +187,12 @@ function RoomDetails() {
       <div className="grid gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-12">
         {/* Left: Gallery */}
         <div className="space-y-5 sm:space-y-6">
-          {/* Main image slider */}
+          {/* Main image */}
           <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-slate-900/5 shadow-sm">
             <img
-              src={gallery[activeImageIndex]}
+              src={gallery[activeImageIndex]?.large}
               alt={room.title}
-              className="aspect-16/10 w-full object-cover sm:aspect-video"
+              className="aspect-16/10 w-full object-cover transition-opacity duration-300 sm:aspect-video"
             />
 
             {gallery.length > 1 && (
@@ -181,28 +240,30 @@ function RoomDetails() {
           </div>
 
           {/* Thumbnails */}
-          <div className="grid grid-cols-3 gap-4">
-            {gallery.map((img, idx) => {
-              const isActive = idx === activeImageIndex;
-              return (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => setActiveImageIndex(idx)}
-                  className={`group overflow-hidden rounded-2xl border bg-slate-100 transition ${isActive
-                    ? 'border-indigo-500 ring-2 ring-indigo-500/40'
-                    : 'border-slate-200 hover:border-slate-300'
-                    }`}
-                >
-                  <img
-                    src={img}
-                    alt={`${room.title}-${idx}`}
-                    className="h-24 w-full object-cover transition duration-200 group-hover:scale-105 sm:h-28"
-                  />
-                </button>
-              );
-            })}
-          </div>
+          {gallery.length > 1 && (
+            <div className="grid grid-cols-3 gap-4 sm:grid-cols-4">
+              {gallery.map((img, idx) => {
+                const isActive = idx === activeImageIndex;
+                return (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setActiveImageIndex(idx)}
+                    className={`group overflow-hidden rounded-2xl border bg-slate-100 transition ${isActive
+                      ? 'border-indigo-500 ring-2 ring-indigo-500/40'
+                      : 'border-slate-200 hover:border-slate-300'
+                      }`}
+                  >
+                    <img
+                      src={img.small}
+                      alt={`${room.title}-${idx}`}
+                      className="h-24 w-full object-cover transition duration-200 group-hover:scale-105 sm:h-28"
+                    />
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Right: Details */}
@@ -227,27 +288,72 @@ function RoomDetails() {
             </p>
           </div>
 
+          {/* Description / Overview */}
           <div className="space-y-3">
             <p className="text-sm font-semibold text-slate-800">Overview</p>
             <p className="text-sm leading-relaxed text-slate-700 sm:text-base">
-              This listing is ready for quick booking once the backend is connected. Expect bright interiors, reliable
-              utilities, and responsive support for residents or guests.
+              {room.Description || 'No description available for this listing.'}
             </p>
           </div>
 
-          <div className="space-y-3 border-t border-slate-100 pt-4">
-            <p className="text-sm font-semibold text-slate-800">Facilities</p>
-            <div className="flex flex-wrap gap-2.5">
-              {facilities.map((facility) => (
-                <span
-                  key={facility}
-                  className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 sm:text-[13px]"
-                >
-                  {facility}
-                </span>
-              ))}
-            </div>
+          {/* Room Info Grid */}
+          <div className="grid grid-cols-2 gap-3 border-t border-slate-100 pt-4 sm:grid-cols-3">
+            {room.bathroom && (
+              <div className="rounded-xl bg-slate-50 p-3">
+                <p className="text-xs font-semibold uppercase text-slate-500">Bathrooms</p>
+                <p className="mt-1 text-sm font-bold text-slate-800">{room.bathroom}</p>
+              </div>
+            )}
+            {room.person && (
+              <div className="rounded-xl bg-slate-50 p-3">
+                <p className="text-xs font-semibold uppercase text-slate-500">Capacity</p>
+                <p className="mt-1 text-sm font-bold text-slate-800">{room.person} {room.person === 1 ? 'person' : 'persons'}</p>
+              </div>
+            )}
+            {room.type && (
+              <div className="rounded-xl bg-slate-50 p-3">
+                <p className="text-xs font-semibold uppercase text-slate-500">Type</p>
+                <p className="mt-1 text-sm font-bold text-slate-800">{room.type}</p>
+              </div>
+            )}
+            {room.quantity != null && (
+              <div className="rounded-xl bg-slate-50 p-3">
+                <p className="text-xs font-semibold uppercase text-slate-500">Available</p>
+                <p className="mt-1 text-sm font-bold text-slate-800">{room.quantity} {room.quantity === 1 ? 'unit' : 'units'}</p>
+              </div>
+            )}
           </div>
+
+          {/* Services / Facilities */}
+          {facilities.length > 0 && (
+            <div className="space-y-3 border-t border-slate-100 pt-4">
+              <p className="text-sm font-semibold text-slate-800">Services & Facilities</p>
+              <div className="flex flex-wrap gap-2.5">
+                {facilities.map((facility) => (
+                  <span
+                    key={facility}
+                    className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 sm:text-[13px]"
+                  >
+                    {facility}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Video */}
+          {room.video && (
+            <div className="space-y-3 border-t border-slate-100 pt-4">
+              <p className="text-sm font-semibold text-slate-800">Video Tour</p>
+              <video
+                controls
+                className="w-full rounded-2xl"
+                src={`https://test.hiremyroom.com/videos/${room.video}`}
+              >
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          )}
 
           <div className="mt-2 flex flex-col gap-3 border-t border-slate-100 pt-4 sm:mt-4 sm:flex-row">
             <Button
@@ -267,9 +373,9 @@ function RoomDetails() {
             <Button
               variant="ghost"
               className="w-full sm:flex-1"
-              onClick={() => navigate('/rooms')}
+              onClick={() => navigate('/')}
             >
-              Back to rooms
+              Back to home
             </Button>
           </div>
         </div>
