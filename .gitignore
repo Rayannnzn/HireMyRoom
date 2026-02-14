@@ -12,10 +12,10 @@ dist
 dist-ssr
 *.local
 
-# AI / Agent config
-.agents/
-.cursor/
-Skill.md
+# # AI / Agent config
+# .agents/
+# .cursor/
+# Skill.md
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
