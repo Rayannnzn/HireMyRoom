@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { resolveRoomImage } from '../../services/homeApi';
 import Badge from '../common/Badge';
 import Button from '../common/Button';
 import BookingRequestModal from '../common/BookingRequestModal';
@@ -24,7 +25,7 @@ function RoomCard({ room }) {
   const pricePrefix = Number.isFinite(priceNumber) ? priceNumber.toLocaleString() : room.price;
   const priceType = room.pricing_category || room.priceType || 'month';
 
-  const imageSrc = room.image || PLACEHOLDER_IMAGE;
+  const imageSrc = resolveRoomImage(room) || room.image || PLACEHOLDER_IMAGE;
   const locationText = room.location || [room.area, room.city].filter(Boolean).join(', ');
 
   const handleBookClick = (e) => {
