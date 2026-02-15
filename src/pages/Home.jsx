@@ -15,7 +15,7 @@ const categories = [
   { label: 'Married Couple Rooms', value: 'vip', color: 'sky' },
 ];
 
-import { newlyAddedRooms, apartmentsDummy } from '../data/dummyRooms';
+import { newlyAddedRooms } from '../data/dummyRooms';
 
 function Home() {
   const [filters, setFilters] = useState({ type: '', city: '', area: '', sort: '', query: '' });
@@ -154,12 +154,12 @@ function Home() {
         delay={400}
       />
 
-      {/* SECTION 4: Apartments / Villas / Farmhouses (Dummy Data) */}
+      {/* SECTION 4: Apartments / Villas / Farmhouses (from /api/home) */}
       <RoomSection
         title="Apartments / Villas / Farmhouses"
         icon="🏠"
-        rooms={apartmentsDummy}
-        isLoading={false}
+        rooms={homeData?.apartments}
+        isLoading={isLoading}
         viewAllHref="/rooms"
         delay={500}
       />
