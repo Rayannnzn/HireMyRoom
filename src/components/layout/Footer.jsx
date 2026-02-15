@@ -14,7 +14,7 @@ function Footer() {
                 Find your perfect space with ease. From cozy rooms to luxury apartments, we have it all.
               </p>
             </div>
-            
+
             <div className="flex flex-col gap-4">
               <h3 className="font-semibold text-white">Subscribe to our newsletter</h3>
               <form className="flex gap-2" onSubmit={(e) => e.preventDefault()}>
@@ -97,18 +97,18 @@ function Footer() {
             <ul className="flex flex-col gap-6 text-slate-400">
               <li className="flex items-start gap-4">
                 <MapPin className="mt-1 shrink-0 text-indigo-500" size={20} />
-                <span className="leading-relaxed">123 Innovation Drive, Tech Valley, CA 94043</span>
+                <span className="leading-relaxed">Johar Town Phase-3, C2 Block.</span>
               </li>
               <li className="flex items-center gap-4">
                 <Phone className="shrink-0 text-indigo-500" size={20} />
-                <span>+1 (555) 123-4567</span>
+                <span>+92 300 1234567</span>
               </li>
               <li className="flex items-center gap-4">
                 <Mail className="shrink-0 text-indigo-500" size={20} />
-                <span>support@hiremyroom.com</span>
+                <span>info@hiremyroom.com</span>
               </li>
             </ul>
-            
+
             {/* Social Media */}
             <div className="mt-10">
               <h4 className="mb-6 text-sm font-semibold text-white">Follow Us</h4>

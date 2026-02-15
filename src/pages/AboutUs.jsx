@@ -165,8 +165,8 @@ function AboutUs() {
             </div>
             <div className="rounded-xl bg-white/10 p-4 backdrop-blur">
               <div className="mb-2 text-sm font-semibold uppercase tracking-wide text-indigo-200">Email</div>
-              <a href="mailto:support@hiremyroom.com" className="text-lg font-semibold hover:text-indigo-200">
-                support@hiremyroom.com
+              <a href="mailto:info@hiremyroom.com" className="text-lg font-semibold hover:text-indigo-200">
+                info@hiremyroom.com
               </a>
             </div>
           </div>
