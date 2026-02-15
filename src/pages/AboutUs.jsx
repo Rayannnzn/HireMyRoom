@@ -6,7 +6,7 @@ function AboutUs() {
       role: 'CEO',
       description:
         "As the visionary leader of Hire My Room, our CEO drives the company's strategic direction, ensuring innovation and excellence in every aspect of our platform. With a passion for solving real-world challenges, Mustansar Ali Khan has built Hire My Room into a trusted name in the rental industry.",
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
+      image: 'https://hiremyroom.com/team-members/Mustansar.jpg',
     },
     {
       id: 2,
@@ -14,7 +14,7 @@ function AboutUs() {
       role: 'Head of Technical Department',
       description:
         "Abdullah Atiq brings extensive expertise in software development and system architecture to the table. As the Head of Technical Department, he leads the development of our platform, ensuring it remains fast, secure, and user-friendly. His commitment to innovation keeps Hire My Room at the forefront of technological advancements in the rental market.",
-      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=400&q=80',
+      image: 'https://hiremyroom.com/team-members/Abd.jpg',
     },
     {
       id: 3,
@@ -22,7 +22,7 @@ function AboutUs() {
       role: 'Head of Operations',
       description:
         "Muhammad Ahmad Tariq oversees all operational activities at Hire My Room, ensuring a seamless and reliable experience for our users. His meticulous attention to detail and strategic approach to operations have been instrumental in scaling our platform to meet growing demand.",
-      image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80',
+      image: 'https://hiremyroom.com/team-members/Ahmad.jpg',
     },
     {
       id: 4,
@@ -30,7 +30,7 @@ function AboutUs() {
       role: 'Marketing Head',
       description:
         "Arslan Sajid Khan spearheads our marketing efforts, driving brand visibility and user acquisition. With a deep understanding of digital marketing strategies, Arslan has successfully expanded Hire My Room's reach, connecting more property owners and renters than ever before.",
-      image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80',
+      image: 'https://hiremyroom.com/team-members/Arslan.jpg',
     },
   ];
 
