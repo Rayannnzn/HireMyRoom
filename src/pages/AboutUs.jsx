@@ -118,7 +118,7 @@ function AboutUs() {
               key={member.id}
               className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md"
             >
-              <div className="relative h-64 overflow-hidden">
+              <div className="relative h-98 overflow-hidden">
                 <img
                   src={member.image}
                   alt={member.name}
