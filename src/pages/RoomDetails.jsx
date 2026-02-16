@@ -137,7 +137,7 @@ function RoomDetails() {
 
   if (isLoading) {
     return (
-      <div className="mx-auto flex min-h-[500px] w-[92%] max-w-[1600px] items-center justify-center px-2 py-20 sm:px-4">
+      <div className="mx-auto flex min-h-screen w-[92%] max-w-[1600px] items-center justify-center px-2 pt-24 pb-20 sm:px-4 sm:pt-32 sm:pb-24">
         <Loader size="lg" />
       </div>
     );

@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import ScrollToTop from '../components/common/ScrollToTop';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import OwnerLayout from '../components/layout/OwnerLayout';
@@ -23,11 +24,11 @@ import GuestProfile from '../pages/guest/GuestProfile';
 // Protected Route Component
 function ProtectedRoute({ children, requiredRole }) {
   const { user } = useAuth();
-  
+
   if (!user) {
     return <Navigate to="/login" replace />;
   }
-  
+
   if (requiredRole && user.role !== requiredRole) {
     // Redirect to appropriate dashboard
     if (user.role === 'OWNER') {
@@ -36,7 +37,7 @@ function ProtectedRoute({ children, requiredRole }) {
       return <Navigate to="/guest/booking-requests" replace />;
     }
   }
-  
+
   return children;
 }
 
@@ -54,6 +55,7 @@ function PublicLayout({ children }) {
 function AppRoutes() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         {/* Public Routes */}
         <Route
