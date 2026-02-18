@@ -6,6 +6,7 @@ import ScrollReveal from '../components/common/ScrollReveal';
 import Loader from '../components/common/Loader';
 import RoomSection from '../components/common/RoomSection';
 import { useHomeData } from '../hooks/useHomeData';
+import { newlyAddedRooms } from '../data/dummyRooms';
 
 const categories = [
   { label: 'Normal Rooms', value: 'normal', color: 'indigo' },
@@ -15,7 +16,6 @@ const categories = [
   { label: 'Married Couple Rooms', value: 'vip', color: 'sky' },
 ];
 
-import { newlyAddedRooms } from '../data/dummyRooms';
 
 function Home() {
   const [filters, setFilters] = useState({ type: '', city: '', area: '', sort: '', query: '' });
@@ -77,6 +77,55 @@ function Home() {
 
   return (
     <div className="mx-auto w-[92%] max-w-1600px px-2 py-10 sm:px-4">
+
+
+      <ScrollReveal>
+
+
+    <section className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-600 to-indigo-700 animate-gradient-blue px-6 py-10 text-white shadow-2xl">
+
+{/* Blue Glow Blobs */}
+<div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-blue-400 opacity-30 blur-3xl animate-float-blue"></div>
+<div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-indigo-400 opacity-30 blur-3xl animate-float-blue"></div>
+
+<div className="relative z-10 flex flex-col gap-10 md:flex-row md:items-center md:justify-between">
+
+  {/* LEFT CONTENT */}
+  <div className="max-w-xl space-y-6">
+    <p className="inline-flex rounded-full bg-white/20 px-4 py-1 text-xs font-semibold uppercase tracking-wider backdrop-blur">
+      HireMyRoom
+    </p>
+
+    <h1 className="text-4xl font-bold leading-tight md:text-5xl">
+      Find Rooms. Book Instantly. Move In.
+    </h1>
+
+    <p className="text-lg text-indigo-100">
+      Discover verified rooms, apartments, hostels and hotels near you.
+      Compare prices, explore photos and rent without hassle.
+    </p>
+
+  </div>
+
+  {/* GLASS CARD */}
+  <div className="rounded-2xl bg-white/10 p-8 backdrop-blur-xl shadow-xl border border-white/20 max-w-sm">
+    <p className="text-lg font-semibold">Why HireMyRoom?</p>
+    <ul className="mt-4 space-y-3 text-indigo-100 text-sm">
+      <li>• Verified Listings</li>
+      <li>• Secure Booking System</li>
+      <li>• Affordable Options</li>
+      <li>• Mobile Friendly</li>
+    </ul>
+  </div>
+
+</div>
+</section>
+
+      
+      </ScrollReveal>
+
+
+
       {/* Choose a category */}
       <ScrollReveal>
         <section className="mt-10 space-y-4">
