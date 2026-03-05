@@ -43,11 +43,27 @@ export async function fetchHomeData() {
         throw new Error('Invalid home response shape');
     }
 
+    const superHotRooms = payload.superHotRooms ?? [];
+    const hotRooms = payload.hotRooms ?? [];
+    const normalRooms = payload.normalRooms ?? [];
+    const apartments = payload.apartments ?? [];
+
+    // Combine all rooms and sort by created_at descending for "Newly Added"
+    const newlyAddedRooms = [
+        ...superHotRooms,
+        ...hotRooms,
+        ...normalRooms,
+        ...apartments,
+    ]
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+        .slice(0, 8);
+
     return {
-        superHotRooms: payload.superHotRooms ?? [],
-        hotRooms: payload.hotRooms ?? [],
-        normalRooms: payload.normalRooms ?? [],
-        apartments: payload.apartments ?? [],
+        superHotRooms,
+        hotRooms,
+        normalRooms,
+        apartments,
+        newlyAddedRooms,
         cities: payload.cities ?? [],
         areas: payload.areas ?? [],
         reviews: payload.reviews ?? [],

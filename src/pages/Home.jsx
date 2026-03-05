@@ -6,7 +6,6 @@ import ScrollReveal from '../components/common/ScrollReveal';
 import Loader from '../components/common/Loader';
 import RoomSection from '../components/common/RoomSection';
 import { useHomeData } from '../hooks/useHomeData';
-import { newlyAddedRooms } from '../data/dummyRooms';
 
 const categories = [
   { label: 'Normal Rooms', value: 'normal', color: 'indigo' },
@@ -193,12 +192,12 @@ function Home() {
         delay={300}
       />
 
-      {/* SECTION 3: Newly Added Rooms (Dummy Data) */}
+      {/* SECTION 3: Newly Added Rooms */}
       <RoomSection
         title="Newly Added Rooms"
         icon="🆕"
-        rooms={newlyAddedRooms}
-        isLoading={false}
+        rooms={homeData?.newlyAddedRooms}
+        isLoading={isLoading}
         viewAllHref="/rooms"
         delay={400}
       />
